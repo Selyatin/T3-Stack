@@ -30,7 +30,7 @@ const Home: NextPage = () => {
   const [searchString, setSearchString] = useState("");
   const router = useRouter();
   const page = parseInt(router.query.page as string) - 1 || 0;
-  const users = api.user.paginatedFind.useQuery({ page, searchString, limit: 5 });
+  const users = api.user.paginatedFind.useQuery({ page, searchString, limit: 10});
 
   return (
     <>
