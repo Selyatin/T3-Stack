@@ -33,7 +33,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <PageContainer>
-        <div className="flex w-full mb-2 justify-between">
+        <div className="mb-2 flex w-full justify-between">
           <div className="breadcrumbs text-2xl font-bold">
             <ul>
               <li>

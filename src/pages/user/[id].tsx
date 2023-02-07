@@ -13,7 +13,6 @@ import { isAuthenticated } from "../../server/sessions";
 
 import { api } from "../../utils/api";
 import { useEffect, useState } from "react";
-import Error from "../../components/Error";
 
 type Props = { id: number | null };
 
@@ -75,13 +74,21 @@ const UserPage = (props: Props) => {
 
   const handleUpsert = async () => {
     if (!user || !company || !address) return;
-    await userMutation.mutateAsync({ user, company, address });
-    Router.replace("/");
+    try {
+      await userMutation.mutateAsync({ user, company, address });
+      Router.replace("/");
+    } catch (err) {
+      alert(err);
+    }
   };
 
   const handleDelete = async () => {
-    await deleteUserMutation.mutateAsync(user.id);
-    Router.replace("/");
+    try {
+      await deleteUserMutation.mutateAsync(user.id);
+      Router.replace("/");
+    } catch (err) {
+      alert(err);
+    }
   };
 
   const handlePlaceholder = async () => {
@@ -138,15 +145,6 @@ const UserPage = (props: Props) => {
             </li>
           </ul>
         </div>
-
-        {userMutation.error?.message ? (
-          <Error message={JSON.parse(userMutation.error.message)[0].message} />
-        ) : null}
-        {deleteUserMutation.error?.message ? (
-          <Error
-            message={JSON.parse(deleteUserMutation.error.message)[0].message}
-          />
-        ) : null}
 
         {userQuery.isLoading && !user ? (
           <div className="flex h-full">
