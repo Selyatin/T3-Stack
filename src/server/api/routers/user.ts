@@ -18,7 +18,8 @@ export default createTRPCRouter({
       })
     )
     .query(async ({ input, ctx }) => {
-      const totalPages = ((await ctx.prisma.user.count() - 1) / input.limit) + 1;
+    const totalPages = Math.ceil(await ctx.prisma.user.count() / input.limit);
+    console.log(totalPages);
       if (input.page > totalPages) throw new TRPCError({ code: "BAD_REQUEST" });
       const users = await ctx.prisma.user.findMany({
         skip: input.page * input.limit,
@@ -54,7 +55,7 @@ export default createTRPCRouter({
           address: true,
         },
       });
-
+    
       if (!user) throw new TRPCError({ code: "NOT_FOUND" });
 
       return user;
