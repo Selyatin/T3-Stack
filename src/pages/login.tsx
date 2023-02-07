@@ -33,7 +33,7 @@ const Login: NextPage = () => {
       <Head>
         <title>Login</title>
       </Head>
-      <div className="align-center container flex h-screen justify-center">
+      <div className="align-center container flex m-auto h-screen justify-center">
         <form
           className="card m-auto w-96 bg-base-100 text-neutral shadow"
           onSubmit={handleSubmit}
