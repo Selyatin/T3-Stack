@@ -85,7 +85,7 @@ export default createTRPCRouter({
         update: input.user,
         create: input.user,
         where: {
-          id: input.user.id ?? -1,
+          id: input.user.id === -1 ? undefined : input.user.id,
         },
       });
 
