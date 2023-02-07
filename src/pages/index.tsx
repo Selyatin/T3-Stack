@@ -60,7 +60,7 @@ const Home: NextPage = () => {
           </div>
         ) : (
           <>
-          <div className="align-center flex flex-wrap justify-center gap-4">
+          <div className="align-center flex flex-wrap justify-center gap-4 mb-4">
             {users.data?.totalPages ? (
               users.data.users.map((user, i) => <UserCard key={i} {...user} />)
             ) : (
