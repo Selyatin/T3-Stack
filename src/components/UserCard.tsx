@@ -4,19 +4,21 @@ import { faUserAlt, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type Props = {
-  id: number;
-  name: string;
-  email: string;
+  id: number,
+  username: string,
+  name: string,
+  email: string,
   company: {
-    name: string;
-  } | null;
+    name: string,
+  } | null,
 };
 
-const UserCard: FunctionComponent<Props> = ({ id, name, email, company }) => {
+const UserCard: FunctionComponent<Props> = ({ id, username, name, email, company }) => {
   return (
     <div className="card w-80 border shadow transition hover:shadow-lg">
       <div className="card-body text-center">
         <FontAwesomeIcon icon={faUserAlt} className="m-auto" width={60} />
+        <h3 className="m-auto text-xl">Username: {username}</h3>
         <h3 className="m-auto text-xl">Name: {name}</h3>
         <h3 className="m-auto text-xl">E-Mail: {email}</h3>
         <h3 className="m-auto text-xl">

@@ -13,6 +13,9 @@ import { isAuthenticated } from "../server/sessions";
 import { api } from "../utils/api";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Pagination from "../components/Pagination";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 export const getServerSideProps: GetServerSideProps = async (
   ctx: GetServerSidePropsContext
@@ -24,7 +27,10 @@ export const getServerSideProps: GetServerSideProps = async (
 };
 
 const Home: NextPage = () => {
-  const users = api.user.paginatedFind.useQuery({ page: 0, limit: 10 });
+  const [searchString, setSearchString] = useState("");
+  const router = useRouter();
+  const page = parseInt(router.query.page as string) - 1 || 0;
+  const users = api.user.paginatedFind.useQuery({ page, searchString, limit: 5 });
 
   return (
     <>
@@ -41,7 +47,8 @@ const Home: NextPage = () => {
               </li>
             </ul>
           </div>
-          <div className="flex">
+          <div className="flex gap-2">
+            <input type="text" placeholder="Search" className="input input-bordered" onChange={(e) => setSearchString(e.target.value)} />
             <Link href="/user/add" className="btn-success btn">
               <FontAwesomeIcon icon={faPlus} />
             </Link>
@@ -52,6 +59,7 @@ const Home: NextPage = () => {
             <Loading />
           </div>
         ) : (
+          <>
           <div className="align-center flex flex-wrap justify-center gap-4">
             {users.data?.totalPages ? (
               users.data.users.map((user, i) => <UserCard key={i} {...user} />)
@@ -59,7 +67,13 @@ const Home: NextPage = () => {
               <h2 className="text-2xl">Couldn't find any Users.</h2>
             )}
           </div>
+
+          {users.data?.totalPages ? <Pagination totalPages={Math.round(users.data.totalPages)}/> : null}
+          </>
         )}
+
+        <div className="form-control"></div>
+        
       </PageContainer>
     </>
   );

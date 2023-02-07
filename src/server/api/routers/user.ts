@@ -7,7 +7,6 @@ import {
   CompanySchema,
   AddressSchema,
 } from "../../../../prisma/generated/zod";
-import { User } from "@prisma/client";
 
 export default createTRPCRouter({
   paginatedFind: protectedProcedure
@@ -15,10 +14,11 @@ export default createTRPCRouter({
       z.object({
         page: z.number().nonnegative(),
         limit: z.number().nonnegative(),
+        searchString: z.string().optional()
       })
     )
     .query(async ({ input, ctx }) => {
-      const totalPages = (await ctx.prisma.user.count()) / input.limit;
+      const totalPages = ((await ctx.prisma.user.count() - 1) / input.limit) + 1;
       if (input.page > totalPages) throw new TRPCError({ code: "BAD_REQUEST" });
       const users = await ctx.prisma.user.findMany({
         skip: input.page * input.limit,
@@ -26,6 +26,7 @@ export default createTRPCRouter({
         select: {
           id: true,
           name: true,
+        username: true,
           email: true,
           company: {
             select: {
@@ -33,7 +34,12 @@ export default createTRPCRouter({
             },
           },
         },
-      });
+        where: input.searchString ? {
+        username: {
+          contains: input.searchString,
+          mode: "insensitive"
+        }
+      } : undefined});
       return { users, totalPages };
     }),
   findUser: protectedProcedure
@@ -78,9 +84,11 @@ export default createTRPCRouter({
       console.log(input.user);
       const user =
         input.user.id === -1
-          ? await ctx.prisma.user.create({ data: {...input.user, id: undefined}})
+          ? await ctx.prisma.user.create({
+              data: { ...input.user, id: undefined },
+            })
           : await ctx.prisma.user.update({
-              data: {...input.user, id:undefined},
+              data: { ...input.user, id: undefined },
               where: { id: input.user.id },
             });
 
@@ -89,7 +97,7 @@ export default createTRPCRouter({
 
       await ctx.prisma.address.upsert({
         update: input.address,
-        create: {...input.address, id: undefined},
+        create: { ...input.address, id: undefined },
         where: {
           userId: user.id,
         },
@@ -97,7 +105,7 @@ export default createTRPCRouter({
 
       await ctx.prisma.company.upsert({
         update: input.company,
-        create: {...input.company, id: undefined},
+        create: { ...input.company, id: undefined },
         where: {
           userId: user.id,
         },
