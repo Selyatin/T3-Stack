@@ -52,7 +52,7 @@ const Home: NextPage = () => {
             <Loading />
           </div>
         ) : (
-          <div className="align-center flex justify-center gap-4">
+          <div className="align-center flex flex-wrap justify-center gap-4">
             {users.data?.totalPages ? (
               users.data.users.map((user, i) => <UserCard key={i} {...user} />)
             ) : (

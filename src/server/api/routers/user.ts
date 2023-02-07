@@ -7,6 +7,7 @@ import {
   CompanySchema,
   AddressSchema,
 } from "../../../../prisma/generated/zod";
+import { User } from "@prisma/client";
 
 export default createTRPCRouter({
   paginatedFind: protectedProcedure
@@ -74,11 +75,12 @@ export default createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      let user =
+      console.log(input.user);
+      const user =
         input.user.id === -1
-          ? await ctx.prisma.user.create({ data: input.user })
+          ? await ctx.prisma.user.create({ data: {...input.user, id: undefined}})
           : await ctx.prisma.user.update({
-              data: input.user,
+              data: {...input.user, id:undefined},
               where: { id: input.user.id },
             });
 
@@ -87,7 +89,7 @@ export default createTRPCRouter({
 
       await ctx.prisma.address.upsert({
         update: input.address,
-        create: input.address,
+        create: {...input.address, id: undefined},
         where: {
           userId: user.id,
         },
@@ -95,7 +97,7 @@ export default createTRPCRouter({
 
       await ctx.prisma.company.upsert({
         update: input.company,
-        create: input.company,
+        create: {...input.company, id: undefined},
         where: {
           userId: user.id,
         },
